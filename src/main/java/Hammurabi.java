@@ -1,5 +1,5 @@
-package java;
-package hamurabi;
+
+package hammurabi;
 import java.util.Random;
 import java.util.Scanner;
 
