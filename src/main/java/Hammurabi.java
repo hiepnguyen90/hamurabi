@@ -12,6 +12,8 @@ Scanner scan = new Scanner(System.in);
     }
 
     void playGame() {
+
+        //declaration & initialization of all the variables.
         int year = 1;
         int population = 100;
         int bushels = 2800;
@@ -24,7 +26,8 @@ Scanner scan = new Scanner(System.in);
         int harvest = 2800;
 
 
-        System.out.println("Congratulations, you are the newest ruler of ancient Sumer, elected for a ten year term of office.\n" +
+        System.out.println("========================================================================================================\n" +
+                        "Congratulations, you are the newest ruler of ancient Sumer, elected for a ten year term of office.\n" +
                         "Your duties are to dispense food, direct farming, and buy and sell land as needed to support your people. \n" +
                         "Watch out for rat infestiations and the plague! Grain is the general currency, measured in bushels. \n" +
                         "The following will help you in your decisions:\n" +
@@ -35,6 +38,7 @@ Scanner scan = new Scanner(System.in);
                         "The market price for land fluctuates yearly\n" +
                         "Rule wisely and you will be showered with appreciation at the end of your term.\n" +
                         "Rule poorly and you will be kicked out of office!\n"+
+                        "========================================================================================================\n" +
                         "\n" +
                         "Press any key to proceed");
 
@@ -45,18 +49,25 @@ Scanner scan = new Scanner(System.in);
 
         for(year = 1; year <= 10; year++) {
             System.out.println(printSummary(year,plague, starved,immigrants,population,harvest,bushelsEaten,land,landValue));
+
             int bought = askHowManyAcresToBuy(landValue, bushels);
             land += bought;
             bushels -= bought * landValue;
 
             if(bought == 0){
+                System.out.println("=========================================================================");
                 int sold = askHowManyAcresToSell(land);
                 land -= sold;
                 bushels += sold * landValue;
             }
+            System.out.println("========================================================================="); //Divider
+            System.out.println("You now have " + bushels + " bushels left.");
 
             int feed = askHowMuchGrainToFeedPeople(bushels);
             bushels -= feed;
+
+            System.out.println("========================================================================="); //Divider
+
 
             int plant = askHowManyAcresToPlant(land, population, bushels);
             bushels -= plant * 2;
@@ -68,15 +79,17 @@ Scanner scan = new Scanner(System.in);
             population -= starved;
 
             if(uprising(population, starved)){
+                System.out.println("=========================================================================");
                 System.out.println("Yo bro, your population starved, you stink at this job");
                 break;
             }
             if(starved == 0) {
+                System.out.println("=========================================================================");
                 immigrants = immigrants(population, land, bushels);
                 population += immigrants;
             }
 
-            harvest = harvest(plant, plant);
+            harvest = harvest(plant);
             bushels += harvest;
 
             bushelsEaten = grainEatenByRats(bushels);
@@ -123,22 +136,21 @@ Scanner scan = new Scanner(System.in);
 
 
     int askHowManyAcresToSell(int acresOwned) {
-        int acres = getNumber("How many acres of land would you like to sell Sire?\n");
-        if (acresOwned > acres && acresOwned >= 0) {
-            System.out.println("Sire you have sold " + acres + " acres of land\n");
-
-        } else if (acresOwned < acres) {
-            System.out.println("Sire, respectfully so, you cannot sell land that you do not own\n");
-            acres = 0;
+        int acres = getNumber("How many acres do you wish to sell? ");
+        if (acres > acresOwned) {
+            System.out.println("You don't that many acres to sell!");
+            return 0;
+        } else if (acres < acresOwned && acres > 0) { //If you have more acres owned than want to sell and you want to sell more than 0
+            System.out.println("You sold " + acres + " acres of land!");
+            return acres;
         } else {
-            System.out.println("You did not sell anything\n");
+            System.out.println("You didn't sell any land this year.");
+        }
+        return 0;
 
-        }return acres;
     }
-
-
     int askHowMuchGrainToFeedPeople(int bushels){
-        int feed = getNumber("Sire, the people are hungry, how much grain do we have to feed them?\n");
+        int feed = getNumber("Sire, the people are hungry, how much grain do we have to feed them?");
          if(bushels >= feed && feed > 0){
              System.out.println("Sire you have fed your people " + feed + " many of bushels\n");
          } else if (feed > bushels){
@@ -153,9 +165,18 @@ Scanner scan = new Scanner(System.in);
 
     int askHowManyAcresToPlant(int acresOwned, int population, int bushels){
         int plant = 0;
+        int workers = (int) (population * 1);
 
         while(true){
-            plant=getNumber("How much do you want to plant this season?\n");
+            plant=getNumber("\nYou have:\n"
+                    + "    " + acresOwned + " acres of land\n"
+                    + "    " + workers + " workers available\n"
+                    + "    " + bushels + " bushels in storage\n"
+                    + "How much do you want to plant this season?\n"
+                    + "Each acre needs "+ 2 + " bushels and each worker can work on " + 10 + " acres.\n"
+                    );
+
+
             if(plant>acresOwned){
                 System.out.println("Sorry Sire, we do not have enough land\n");
             }
@@ -207,7 +228,7 @@ Scanner scan = new Scanner(System.in);
         return immigrants;
     }
 
-    int harvest(int acres, int bushelsUsedAsSeed){
+    int harvest(int acres){
         int harvest = acres * (rand.nextInt(6) + 1);
         return harvest;
         }
@@ -227,7 +248,7 @@ Scanner scan = new Scanner(System.in);
 
     int getNumber(String message) {
         while (true) {
-            System.out.print(message);
+            System.err.println(message);
             try {
                 return scan.nextInt();
             } catch (InputMismatchException e) {
