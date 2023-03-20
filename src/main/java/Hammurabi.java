@@ -236,7 +236,7 @@ Scanner scan = new Scanner(System.in);
     int grainEatenByRats(int bushels){
         int bushelsEaten = 0;
         if (2 > rand.nextInt(5)) {
-            bushelsEaten = (int) ((double) bushels * (rand.nextInt(2) + 1) / 10 + 0.5);
+            bushelsEaten = (int) ((double) bushels * (rand.nextInt(20) + 10) / 100);
         }
         return bushelsEaten;
         }
